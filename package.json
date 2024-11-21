@@ -1,6 +1,6 @@
 {
   "name": "json-schema-intersect",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Combine multiple JSON Schemas into a single schema which matches instances which are valid for all of the combined schemas, for supporting older JSON Schema versions which lack support for allOf, such Draft 4 used by Swagger/OpenAPI 2.",
   "keywords": [
     "json-schema",
