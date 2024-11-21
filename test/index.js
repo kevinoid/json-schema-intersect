@@ -231,6 +231,26 @@ function testIntersectSchema(intersectSchema) {
       );
     });
 
+    it('preserves unrecognized constraints', () => {
+      assert.deepStrictEqual(
+        intersectSchema(
+          deepFreeze({ unrecognized: 1 }),
+          deepFreeze({}),
+        ),
+        { unrecognized: 1 },
+      );
+    });
+
+    it('throws IntersectNotSupportedError for unrecognized constraints', () => {
+      assert.throws(
+        () => intersectSchema(
+          deepFreeze({ unrecognized: 1 }),
+          deepFreeze({ unrecognized: 2 }),
+        ),
+        IntersectNotSupportedError,
+      );
+    });
+
     it('combines non-overlapping patternProperties', () => {
       assert.deepStrictEqual(
         intersectSchema(
