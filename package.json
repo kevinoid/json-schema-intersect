@@ -1,18 +1,19 @@
 {
-  "name": "@kevinoid/project-template",
+  "name": "json-schema-intersect",
   "version": "0.0.1",
-  "description": "A Node.js/npm project template with codecov, coveralls, ESLint, conventional-changelog, c8, JSDoc, and mocha.",
+  "description": "Combine multiple JSON Schemas into a single schema which matches instances which are valid for all of the combined schemas, for supporting older JSON Schema versions which lack support for allOf, such Draft 4 used by Swagger/OpenAPI 2.",
   "keywords": [
-    "project-template",
-    "template"
+    "json-schema",
+    "openapi",
+    "swagger"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/kevinoid/node-project-template",
-  "bugs": "https://github.com/kevinoid/node-project-template/issues",
+  "homepage": "https://github.com/kevinoid/json-schema-intersect",
+  "bugs": "https://github.com/kevinoid/json-schema-intersect/issues",
   "author": "Kevin Locke <kevin@kevinlocke.name>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kevinoid/node-project-template.git"
+    "url": "https://github.com/kevinoid/json-schema-intersect.git"
   },
   "type": "module",
   "files": [
@@ -24,9 +25,6 @@
   "exports": {
     ".": "./index.js",
     "./package.json": "./package.json"
-  },
-  "bin": {
-    "project-template": "bin/cmd.js"
   },
   "//": "All scripts should run in POSIX sh and Windows cmd.exe",
   "scripts": {
@@ -49,12 +47,10 @@
     "version": "npm run changelog && echo && echo === Please edit CHANGELOG.md as desired, then exit === && echo && \"${npm_config_shell:-${SHELL:-bash}}\" && git commit -m \"Update CHANGELOG.md for $npm_package_version\" CHANGELOG.md",
     "version-deps": "npm install conventional-changelog-cli david depcheck git-branch-is hub-ci-status"
   },
-  "dependencies": {
-    "commander": "^12.0.0"
-  },
   "devDependencies": {
     "@kevinoid/eslint-config": "^33.0.0",
     "c8": "^10.0.0",
+    "deep-freeze": "^0.0.1",
     "eslint": "^8.38.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
