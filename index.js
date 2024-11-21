@@ -320,13 +320,6 @@ function intersectDependentRequired(dependentRequired1, dependentRequired2) {
 }
 
 function intersectType(type1, type2) {
-  if (type1 === type2 || type2 === undefined) {
-    return type1;
-  }
-  if (type1 === undefined) {
-    return type2;
-  }
-
   const arr1 = Array.isArray(type1) ? type1 : [type1];
   const set2 = Array.isArray(type2) ? new Set(type2) : new Set([type2]);
 
