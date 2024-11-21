@@ -327,9 +327,10 @@ function intersectType(type1, type2) {
   for (const elem1 of arr1) {
     if (set2.has(elem1)) {
       intersection.push(elem1);
-    } else if (elem1 === 'integer' && set2.has('number')) {
-      intersection.push(elem1);
-    } else if (elem1 === 'number' && set2.has('integer')) {
+    } else if ((elem1 === 'integer' && set2.has('number'))
+      || (elem1 === 'number' && set2.has('integer'))) {
+      // integer is a subtype of number
+      // add to intersection when present in both types
       intersection.push('integer');
     }
   }
