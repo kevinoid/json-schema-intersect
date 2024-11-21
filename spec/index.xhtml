@@ -1,0 +1,3587 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Specifications in Mocha</title>
+  <meta name="generator" content="Mocha &lt;https://mochajs.org/&gt;" />
+  <meta name="license" content="MIT" />
+  <meta name="copyright" content="&#169; 2016 Kevin Locke &lt;kevin@kevinlocke.name&gt;" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/highlight.js/9.1.0/styles/github.min.css" />
+  <style type="text/css">
+section section {
+  margin-left: 1em;
+}
+section section section section {
+  margin-left: 0;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="suite">
+      <h1>intersectSchema</h1>
+      <dl>
+        <dt>throws TypeError if schema is undefined</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(undefined, {}),
+  TypeError,
+);</code></pre></dd>
+        <dt>unconstrained and unconstrained is unconstrained</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({}),
+  ),
+  {},
+);</code></pre></dd>
+        <dt>false and anything is false</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    false,
+    deepFreeze({ type: &#x27;string&#x27; }),
+  ),
+  false,
+);</code></pre></dd>
+        <dt>true and true is true</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    true,
+    true,
+  ),
+  true,
+);</code></pre></dd>
+        <dt>true and anything is anything</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    true,
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+        <dt>unspecified and unconstrained is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({}),
+  ),
+  { unspecified: 1 },
+);</code></pre></dd>
+        <dt>unspecified === unspecified is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({ unspecified: 1 }),
+  ),
+  { unspecified: 1 },
+);</code></pre></dd>
+        <dt>isDeepStrictEqual(unspecified, unspecified) is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: [1] }),
+    deepFreeze({ unspecified: [1] }),
+  ),
+  { unspecified: [1] },
+);</code></pre></dd>
+        <dt>unspecified !== unspecified throws IntersectNotSupportedError</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({ unspecified: &#x27;1&#x27; }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+        <section class="suite">
+          <h1>for any keyword</h1>
+          <dl>
+            <dt>keyword and unconstrained is keyword</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({}),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>undefined keyword is unconstrained</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: undefined }),
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>keyword1 === keyword2 is keyword1/2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>isDeepStrictEqual(keyword1, keyword2) is keyword1/2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+  ),
+  { type: [&#x27;boolean&#x27;] },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for properties</h1>
+          <dl>
+            <dt>combines non-overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { b: { type: &#x27;boolean&#x27; } } }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      b: { type: &#x27;boolean&#x27; },
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects same-name properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ properties: { n: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema without properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema with empty properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: {} }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>ignores undefined properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: undefined } }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>preserves unrecognized constraints</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unrecognized: 1 }),
+    deepFreeze({}),
+  ),
+  { unrecognized: 1 },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError for unrecognized constraints</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ unrecognized: 1 }),
+    deepFreeze({ unrecognized: 2 }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>combines non-overlapping patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { b: { type: &#x27;boolean&#x27; } } }),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      b: { type: &#x27;boolean&#x27; },
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects identical patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: { minimum: 5 } } }),
+  ),
+  {
+    patternProperties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema without patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema with empty patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: {} }),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching patternProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: false } }),
+  ),
+  {
+    properties: {
+      n: false,
+    },
+    patternProperties: {
+      n: false,
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties not matching patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { m: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: { maximum: 10 },
+    },
+    patternProperties: {
+      m: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties skipping patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({
+      properties: { n: { multipleOf: 2 } },
+      patternProperties: { n: { minimum: 5 } },
+    }),
+  ),
+  {
+    properties: {
+      n: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching multiple patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n1: { maximum: 10 } } }),
+    deepFreeze({
+      patternProperties: {
+        n: { minimum: 5 },
+        1: { multipleOf: 2 },
+      },
+    }),
+  ),
+  {
+    properties: {
+      n1: {
+        minimum: 5,
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+      1: { multipleOf: 2 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: { maximum: 10 } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: {
+      minimum: 5,
+      maximum: 10,
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: true }),
+  ),
+  {
+    additionalProperties: true,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true with others</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: false }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: false with others</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: false }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true/false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching additionalProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    properties: {
+      n: false,
+    },
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects properties skipping additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({
+      properties: { n: { multipleOf: 2 } },
+      additionalProperties: { minimum: 5 },
+    }),
+  ),
+  {
+    properties: {
+      n: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects properties no additionalProperties due to pattern</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n1: { maximum: 10 } } }),
+    deepFreeze({
+      patternProperties: { n: { multipleOf: 2 } },
+      additionalProperties: { minimum: 5 },
+    }),
+  ),
+  {
+    properties: {
+      n1: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: { n: { multipleOf: 2 } },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects patternProperties with additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    patternProperties: {
+      n: {
+        maximum: 10,
+        minimum: 5,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-object properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ properties: true }),
+      deepFreeze({ properties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-object patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ patternProperties: true }),
+      deepFreeze({ patternProperties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-object additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ additionalProperties: 1 }),
+      deepFreeze({ additionalProperties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for allOf</h1>
+          <dl>
+            <dt>concatenates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+    deepFreeze({ allOf: [{ minimum: 5 }] }),
+  ),
+  [
+    {
+      allOf: [
+        { maximum: 10 },
+        { minimum: 5 },
+      ],
+    },
+    {
+      allOf: [
+        { minimum: 5 },
+        { maximum: 10 },
+      ],
+    },
+  ],
+);</code></pre></dd>
+            <dt>removes duplicates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+  ),
+  {
+    allOf: [
+      { maximum: 10 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ allOf: true }),
+      deepFreeze({ allOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for anyOf</h1>
+          <dl>
+            <dt>one is subset of other</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ anyOf: [{ maximum: 10 }] }),
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  { anyOf: [{ maximum: 10 }] },
+);</code></pre></dd>
+            <dt>intersects each if one is single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ anyOf: [{ multipleOf: 1 }] }),
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  {
+    anyOf: [
+      { minimum: 12, multipleOf: 1 },
+      { maximum: 10, multipleOf: 1 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if neither subset nor single</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+    deepFreeze({ anyOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ anyOf: true }),
+      deepFreeze({ anyOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for const</h1>
+          <dl>
+            <dt>throws EmptyIntersectionError if not equal</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ const: 1 }),
+    deepFreeze({ const: &#x27;1&#x27; }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for dependentRequired</h1>
+          <dl>
+            <dt>returns empty if both empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ dependentRequired: {} }),
+    deepFreeze({ dependentRequired: {} }),
+  ),
+  { dependentRequired: {} },
+);</code></pre></dd>
+            <dt>returns non-empty if other empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({ dependentRequired: {} }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>returns non-overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        c: [&#x27;d&#x27;],
+      },
+    }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;],
+      c: [&#x27;d&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>returns union of overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;d&#x27;],
+      },
+    }),
+  ),
+  [
+    {
+      dependentRequired: {
+        a: [&#x27;b&#x27;, &#x27;d&#x27;],
+      },
+    },
+    {
+      dependentRequired: {
+        a: [&#x27;d&#x27;, &#x27;b&#x27;],
+      },
+    },
+  ],
+);</code></pre></dd>
+            <dt>returns unique union of overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;, &#x27;d&#x27;],
+      },
+    }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;, &#x27;d&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-object</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ dependentRequired: true }),
+      deepFreeze({ dependentRequired: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array property</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ dependentRequired: { a: true } }),
+      deepFreeze({ dependentRequired: { a: [] } }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for deprecated</h1>
+          <dl>
+            <dt>not deprecated if one is not deprecated</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({}),
+  ),
+  {},
+);</code></pre></dd>
+            <dt>not deprecated if one is false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({ deprecated: false }),
+  ),
+  {},
+);</code></pre></dd>
+            <dt>returns true if both true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({ deprecated: true }),
+  ),
+  { deprecated: true },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for description</h1>
+          <dl>
+            <dt>is combination of both descriptions</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ description: &#x27;description1&#x27; }),
+    deepFreeze({ description: &#x27;description2&#x27; }),
+  ),
+  [
+    { description: &#x27;Intersection of description1 and description2&#x27; },
+    { description: &#x27;Intersection of description2 and description1&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>is surrounds spaced description with with parens</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ description: &#x27;My description1&#x27; }),
+    deepFreeze({ description: &#x27;My_description2&#x27; }),
+  ),
+  [
+    {
+      description:
+        &#x27;Intersection of (My description1) and My_description2&#x27;,
+    },
+    {
+      description:
+        &#x27;Intersection of My_description2 and (My description1)&#x27;,
+    },
+  ],
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for enum</h1>
+          <dl>
+            <dt>intersects permuted values</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ enum: [1, &#x27;1&#x27;, 2] }),
+    deepFreeze({ enum: [2, 1, &#x27;1&#x27;] }),
+  ),
+  [
+    { enum: [1, &#x27;1&#x27;, 2] },
+    { enum: [2, 1, &#x27;1&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>common subset of first and second</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ enum: [1, 2, 3] }),
+    deepFreeze({ enum: [0, 1, 2] }),
+  ),
+  { enum: [1, 2] },
+);</code></pre></dd>
+            <dt>treats null like any other value</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ enum: [1, 2, 3, null] }),
+    deepFreeze({ enum: [0, 1, 2, null] }),
+  ),
+  { enum: [1, 2, null] },
+);</code></pre></dd>
+            <dt>throws EmptyIntersectionError if none in common</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ enum: [2, 3] }),
+    deepFreeze({ enum: [0, 1] }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if one has an object</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ enum: [2, {}] }),
+    deepFreeze({ enum: [0, 1] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ enum: true }),
+      deepFreeze({ enum: [0, 1] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for examples</h1>
+          <dl>
+            <dt>concatenates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ examples: [10] }),
+    deepFreeze({ examples: [5] }),
+  ),
+  [
+    { examples: [10, 5] },
+    { examples: [5, 10] },
+  ],
+);</code></pre></dd>
+            <dt>removes duplicates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ examples: [10] }),
+    deepFreeze({ examples: [10] }),
+  ),
+  {
+    examples: [10],
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ examples: true }),
+      deepFreeze({ examples: [10] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for exclusiveMaximum</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: 3 }),
+    deepFreeze({ exclusiveMaximum: 2 }),
+  ),
+  { exclusiveMaximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: -3 }),
+    deepFreeze({ exclusiveMaximum: -2 }),
+  ),
+  { exclusiveMaximum: -3 },
+);</code></pre></dd>
+            <dt>returns smaller exclusiveMaximum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: 2 }),
+  ),
+  { exclusiveMaximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller maximum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ exclusiveMaximum: &#x27;test&#x27; }),
+      deepFreeze({ exclusiveMaximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns smaller with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: true, maximum: 2 }),
+  ),
+  { exclusiveMaximum: true, maximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { exclusiveMaximum: true, maximum: -3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ maximum: true }),
+      deepFreeze({ maximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns smaller with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: true, maximum: 2 }),
+  ),
+  { exclusiveMaximum: true, maximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { exclusiveMaximum: true, maximum: -3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ maximum: true }),
+      deepFreeze({ maximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for exclusiveMinimum</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: 3 }),
+    deepFreeze({ exclusiveMinimum: 2 }),
+  ),
+  { exclusiveMinimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: -3 }),
+    deepFreeze({ exclusiveMinimum: -2 }),
+  ),
+  { exclusiveMinimum: -2 },
+);</code></pre></dd>
+            <dt>returns larger exclusiveMinimum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: 3 }),
+  ),
+  { exclusiveMinimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger minimum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ exclusiveMinimum: &#x27;test&#x27; }),
+      deepFreeze({ exclusiveMinimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns larger with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: true, minimum: 3 }),
+  ),
+  { exclusiveMinimum: true, minimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: -2 }),
+    deepFreeze({ minimum: -3 }),
+  ),
+  { exclusiveMinimum: true, minimum: -2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ minimum: true }),
+      deepFreeze({ minimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns larger with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: true, minimum: 3 }),
+  ),
+  { exclusiveMinimum: true, minimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: -2 }),
+    deepFreeze({ minimum: -3 }),
+  ),
+  { exclusiveMinimum: true, minimum: -2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ minimum: true }),
+      deepFreeze({ minimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxItems</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxItems: 3 }),
+    deepFreeze({ maxItems: 2 }),
+  ),
+  { maxItems: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxLength</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxLength: 3 }),
+    deepFreeze({ maxLength: 2 }),
+  ),
+  { maxLength: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxProperties</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxProperties: 3 }),
+    deepFreeze({ maxProperties: 2 }),
+  ),
+  { maxProperties: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maximum</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { maximum: -3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minItems</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minItems: 3 }),
+    deepFreeze({ minItems: 2 }),
+  ),
+  { minItems: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minLength</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minLength: 3 }),
+    deepFreeze({ minLength: 2 }),
+  ),
+  { minLength: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minProperties</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minProperties: 3 }),
+    deepFreeze({ minProperties: 2 }),
+  ),
+  { minProperties: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minimum</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 3 }),
+    deepFreeze({ minimum: 2 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: -3 }),
+    deepFreeze({ minimum: -2 }),
+  ),
+  { minimum: -2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for multipleOf</h1>
+          <dl>
+            <dt>returns one if multiple of other (integer)</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 4 }),
+    deepFreeze({ multipleOf: 2 }),
+  ),
+  { multipleOf: 4 },
+);</code></pre></dd>
+            <dt>returns one if multiple of other (float)</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 1 }),
+    deepFreeze({ multipleOf: 0.5 }),
+  ),
+  { multipleOf: 1 },
+);</code></pre></dd>
+            <dt>otherwise returns multiple of first and second</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 2 }),
+    deepFreeze({ multipleOf: 3 }),
+  ),
+  { multipleOf: 6 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ multipleOf: true }),
+      deepFreeze({ multipleOf: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for required</h1>
+          <dl>
+            <dt>returns empty if both empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ required: [] }),
+    deepFreeze({ required: [] }),
+  ),
+  { required: [] },
+);</code></pre></dd>
+            <dt>returns non-empty if other empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;] }),
+    deepFreeze({ required: [] }),
+  ),
+  { required: [&#x27;a&#x27;] },
+);</code></pre></dd>
+            <dt>returns union with no intersection</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;] }),
+    deepFreeze({ required: [&#x27;b&#x27;] }),
+  ),
+  [
+    { required: [&#x27;a&#x27;, &#x27;b&#x27;] },
+    { required: [&#x27;b&#x27;, &#x27;a&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>returns either if permuted</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;, &#x27;b&#x27;] }),
+    deepFreeze({ required: [&#x27;b&#x27;, &#x27;a&#x27;] }),
+  ),
+  [
+    { required: [&#x27;a&#x27;, &#x27;b&#x27;] },
+    { required: [&#x27;b&#x27;, &#x27;a&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ required: true }),
+      deepFreeze({ required: [&#x27;a&#x27;, &#x27;b&#x27;] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for oneOf</h1>
+          <dl>
+            <dt>one is permuted other</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ oneOf: [{ maximum: 10 }, { minimum: 12 }] }),
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  [
+    { oneOf: [{ maximum: 10 }, { minimum: 12 }] },
+    { oneOf: [{ minimum: 12 }, { maximum: 10 }] },
+  ],
+);</code></pre></dd>
+            <dt>intersects each if one is single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ oneOf: [{ multipleOf: 1 }] }),
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  {
+    oneOf: [
+      { minimum: 12, multipleOf: 1 },
+      { maximum: 10, multipleOf: 1 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if not permuted nor single</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+    deepFreeze({ oneOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ oneOf: true }),
+      deepFreeze({ oneOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for propertyNames</h1>
+          <dl>
+            <dt>intersects</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ propertyNames: { maxLength: 10 } }),
+    deepFreeze({ propertyNames: { minLength: 5 } }),
+  ),
+  {
+    propertyNames: {
+      minLength: 5,
+      maxLength: 10,
+    },
+  },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for pattern</h1>
+          <dl>
+            <dt>returns anchored lookahead assertion for each pattern</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ pattern: &#x27;hi&#x27; }),
+    deepFreeze({ pattern: &#x27;ho&#x27; }),
+  ),
+  [
+    { pattern: &#x27;^(?=.*hi)(?=.*ho)&#x27; },
+    { pattern: &#x27;^(?=.*ho)(?=.*hi)&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>skips .* for anchored patterns</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ pattern: &#x27;^hi&#x27; }),
+    deepFreeze({ pattern: &#x27;^ho&#x27; }),
+  ),
+  [
+    { pattern: &#x27;^(?=^hi)(?=^ho)&#x27; },
+    { pattern: &#x27;^(?=^ho)(?=^hi)&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>throws TypeError for non-string</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ pattern: true }),
+      deepFreeze({ pattern: &#x27;hi&#x27; }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for readOnly</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ readOnly: true }),
+    deepFreeze({ readOnly: false }),
+  ),
+  { readOnly: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ readOnly: &#x27;hi&#x27; }),
+      deepFreeze({ readOnly: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for title</h1>
+          <dl>
+            <dt>is combination of both titles</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ title: &#x27;title1&#x27; }),
+    deepFreeze({ title: &#x27;title2&#x27; }),
+  ),
+  [
+    { title: &#x27;Intersection of title1 and title2&#x27; },
+    { title: &#x27;Intersection of title2 and title1&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>is surrounds spaced title with with parens</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ title: &#x27;My title1&#x27; }),
+    deepFreeze({ title: &#x27;My_title2&#x27; }),
+  ),
+  [
+    { title: &#x27;Intersection of (My title1) and My_title2&#x27; },
+    { title: &#x27;Intersection of My_title2 and (My title1)&#x27; },
+  ],
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for type</h1>
+          <dl>
+            <dt>type1 intersect type2 is type1 when same</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;number&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type1 intersect unconstrained is type1</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;number&#x27; }),
+    deepFreeze({}),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type2 intersect unconstrained is type2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type1 !== type2 throws EmptyIntersectionError</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>type1 intersect type2 empty EmptyIntersectionError</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+    deepFreeze({ type: [&#x27;number&#x27;] }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>integer intersect number is integer</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;integer&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;integer&#x27; },
+);</code></pre></dd>
+            <dt>permuted array types intersect</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;] }),
+    deepFreeze({ type: [&#x27;number&#x27;, &#x27;boolean&#x27;] }),
+  ),
+  [
+    { type: [&#x27;boolean&#x27;, &#x27;number&#x27;] },
+    { type: [&#x27;number&#x27;, &#x27;boolean&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>type1 subset type2 intersect</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;string&#x27;] }),
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;, &#x27;string&#x27;] }),
+  ),
+  { type: [&#x27;boolean&#x27;, &#x27;string&#x27;] },
+);</code></pre></dd>
+            <dt>type2 subset type1 intersect to single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;, &#x27;string&#x27;] }),
+    deepFreeze({ type: [&#x27;null&#x27;, &#x27;string&#x27;] }),
+  ),
+  { type: &#x27;string&#x27; },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for uniqueItems</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ uniqueItems: true }),
+    deepFreeze({ uniqueItems: false }),
+  ),
+  { uniqueItems: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ uniqueItems: &#x27;hi&#x27; }),
+      deepFreeze({ uniqueItems: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for writeOnly</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ writeOnly: true }),
+    deepFreeze({ writeOnly: false }),
+  ),
+  { writeOnly: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ writeOnly: &#x27;hi&#x27; }),
+      deepFreeze({ writeOnly: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>intersectSchema (swapped)</h1>
+      <dl>
+        <dt>throws TypeError if schema is undefined</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(undefined, {}),
+  TypeError,
+);</code></pre></dd>
+        <dt>unconstrained and unconstrained is unconstrained</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({}),
+  ),
+  {},
+);</code></pre></dd>
+        <dt>false and anything is false</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    false,
+    deepFreeze({ type: &#x27;string&#x27; }),
+  ),
+  false,
+);</code></pre></dd>
+        <dt>true and true is true</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    true,
+    true,
+  ),
+  true,
+);</code></pre></dd>
+        <dt>true and anything is anything</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    true,
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+        <dt>unspecified and unconstrained is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({}),
+  ),
+  { unspecified: 1 },
+);</code></pre></dd>
+        <dt>unspecified === unspecified is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({ unspecified: 1 }),
+  ),
+  { unspecified: 1 },
+);</code></pre></dd>
+        <dt>isDeepStrictEqual(unspecified, unspecified) is unspecified</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unspecified: [1] }),
+    deepFreeze({ unspecified: [1] }),
+  ),
+  { unspecified: [1] },
+);</code></pre></dd>
+        <dt>unspecified !== unspecified throws IntersectNotSupportedError</dt>
+        <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+        <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ unspecified: 1 }),
+    deepFreeze({ unspecified: &#x27;1&#x27; }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+        <section class="suite">
+          <h1>for any keyword</h1>
+          <dl>
+            <dt>keyword and unconstrained is keyword</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({}),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>undefined keyword is unconstrained</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: undefined }),
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>keyword1 === keyword2 is keyword1/2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+  ),
+  { type: &#x27;boolean&#x27; },
+);</code></pre></dd>
+            <dt>isDeepStrictEqual(keyword1, keyword2) is keyword1/2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+  ),
+  { type: [&#x27;boolean&#x27;] },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for properties</h1>
+          <dl>
+            <dt>combines non-overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { b: { type: &#x27;boolean&#x27; } } }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      b: { type: &#x27;boolean&#x27; },
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects same-name properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ properties: { n: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema without properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema with empty properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: {} }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>ignores undefined properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: undefined } }),
+    deepFreeze({ properties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    properties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>preserves unrecognized constraints</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ unrecognized: 1 }),
+    deepFreeze({}),
+  ),
+  { unrecognized: 1 },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError for unrecognized constraints</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ unrecognized: 1 }),
+    deepFreeze({ unrecognized: 2 }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>combines non-overlapping patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { b: { type: &#x27;boolean&#x27; } } }),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      b: { type: &#x27;boolean&#x27; },
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects identical patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: { minimum: 5 } } }),
+  ),
+  {
+    patternProperties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema without patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>handles schema with empty patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: {} }),
+    deepFreeze({ patternProperties: { n: { type: &#x27;number&#x27; } } }),
+  ),
+  {
+    patternProperties: {
+      n: { type: &#x27;number&#x27; },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching patternProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { n: false } }),
+  ),
+  {
+    properties: {
+      n: false,
+    },
+    patternProperties: {
+      n: false,
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties not matching patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ patternProperties: { m: { minimum: 5 } } }),
+  ),
+  {
+    properties: {
+      n: { maximum: 10 },
+    },
+    patternProperties: {
+      m: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties skipping patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({
+      properties: { n: { multipleOf: 2 } },
+      patternProperties: { n: { minimum: 5 } },
+    }),
+  ),
+  {
+    properties: {
+      n: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching multiple patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n1: { maximum: 10 } } }),
+    deepFreeze({
+      patternProperties: {
+        n: { minimum: 5 },
+        1: { multipleOf: 2 },
+      },
+    }),
+  ),
+  {
+    properties: {
+      n1: {
+        minimum: 5,
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: {
+      n: { minimum: 5 },
+      1: { multipleOf: 2 },
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: { maximum: 10 } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: {
+      minimum: 5,
+      maximum: 10,
+    },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: true }),
+  ),
+  {
+    additionalProperties: true,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true with others</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: false }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: false with others</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: false }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects additionalProperties: true/false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ additionalProperties: true }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    properties: {
+      n: {
+        minimum: 5,
+        maximum: 10,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects properties matching additionalProperties: false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: false }),
+  ),
+  {
+    properties: {
+      n: false,
+    },
+    additionalProperties: false,
+  },
+);</code></pre></dd>
+            <dt>intersects properties skipping additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n: { maximum: 10 } } }),
+    deepFreeze({
+      properties: { n: { multipleOf: 2 } },
+      additionalProperties: { minimum: 5 },
+    }),
+  ),
+  {
+    properties: {
+      n: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects properties no additionalProperties due to pattern</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ properties: { n1: { maximum: 10 } } }),
+    deepFreeze({
+      patternProperties: { n: { multipleOf: 2 } },
+      additionalProperties: { minimum: 5 },
+    }),
+  ),
+  {
+    properties: {
+      n1: {
+        maximum: 10,
+        multipleOf: 2,
+      },
+    },
+    patternProperties: { n: { multipleOf: 2 } },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>intersects patternProperties with additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ patternProperties: { n: { maximum: 10 } } }),
+    deepFreeze({ additionalProperties: { minimum: 5 } }),
+  ),
+  {
+    patternProperties: {
+      n: {
+        maximum: 10,
+        minimum: 5,
+      },
+    },
+    additionalProperties: { minimum: 5 },
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-object properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ properties: true }),
+      deepFreeze({ properties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-object patternProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ patternProperties: true }),
+      deepFreeze({ patternProperties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-object additionalProperties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ additionalProperties: 1 }),
+      deepFreeze({ additionalProperties: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for allOf</h1>
+          <dl>
+            <dt>concatenates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+    deepFreeze({ allOf: [{ minimum: 5 }] }),
+  ),
+  [
+    {
+      allOf: [
+        { maximum: 10 },
+        { minimum: 5 },
+      ],
+    },
+    {
+      allOf: [
+        { minimum: 5 },
+        { maximum: 10 },
+      ],
+    },
+  ],
+);</code></pre></dd>
+            <dt>removes duplicates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+    deepFreeze({ allOf: [{ maximum: 10 }] }),
+  ),
+  {
+    allOf: [
+      { maximum: 10 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ allOf: true }),
+      deepFreeze({ allOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for anyOf</h1>
+          <dl>
+            <dt>one is subset of other</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ anyOf: [{ maximum: 10 }] }),
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  { anyOf: [{ maximum: 10 }] },
+);</code></pre></dd>
+            <dt>intersects each if one is single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ anyOf: [{ multipleOf: 1 }] }),
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  {
+    anyOf: [
+      { minimum: 12, multipleOf: 1 },
+      { maximum: 10, multipleOf: 1 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if neither subset nor single</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
+    deepFreeze({ anyOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ anyOf: true }),
+      deepFreeze({ anyOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for const</h1>
+          <dl>
+            <dt>throws EmptyIntersectionError if not equal</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ const: 1 }),
+    deepFreeze({ const: &#x27;1&#x27; }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for dependentRequired</h1>
+          <dl>
+            <dt>returns empty if both empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ dependentRequired: {} }),
+    deepFreeze({ dependentRequired: {} }),
+  ),
+  { dependentRequired: {} },
+);</code></pre></dd>
+            <dt>returns non-empty if other empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({ dependentRequired: {} }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>returns non-overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        c: [&#x27;d&#x27;],
+      },
+    }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;],
+      c: [&#x27;d&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>returns union of overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;d&#x27;],
+      },
+    }),
+  ),
+  [
+    {
+      dependentRequired: {
+        a: [&#x27;b&#x27;, &#x27;d&#x27;],
+      },
+    },
+    {
+      dependentRequired: {
+        a: [&#x27;d&#x27;, &#x27;b&#x27;],
+      },
+    },
+  ],
+);</code></pre></dd>
+            <dt>returns unique union of overlapping properties</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;],
+      },
+    }),
+    deepFreeze({
+      dependentRequired: {
+        a: [&#x27;b&#x27;, &#x27;d&#x27;],
+      },
+    }),
+  ),
+  {
+    dependentRequired: {
+      a: [&#x27;b&#x27;, &#x27;d&#x27;],
+    },
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-object</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ dependentRequired: true }),
+      deepFreeze({ dependentRequired: {} }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array property</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ dependentRequired: { a: true } }),
+      deepFreeze({ dependentRequired: { a: [] } }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for deprecated</h1>
+          <dl>
+            <dt>not deprecated if one is not deprecated</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({}),
+  ),
+  {},
+);</code></pre></dd>
+            <dt>not deprecated if one is false</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({ deprecated: false }),
+  ),
+  {},
+);</code></pre></dd>
+            <dt>returns true if both true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ deprecated: true }),
+    deepFreeze({ deprecated: true }),
+  ),
+  { deprecated: true },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for description</h1>
+          <dl>
+            <dt>is combination of both descriptions</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ description: &#x27;description1&#x27; }),
+    deepFreeze({ description: &#x27;description2&#x27; }),
+  ),
+  [
+    { description: &#x27;Intersection of description1 and description2&#x27; },
+    { description: &#x27;Intersection of description2 and description1&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>is surrounds spaced description with with parens</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ description: &#x27;My description1&#x27; }),
+    deepFreeze({ description: &#x27;My_description2&#x27; }),
+  ),
+  [
+    {
+      description:
+        &#x27;Intersection of (My description1) and My_description2&#x27;,
+    },
+    {
+      description:
+        &#x27;Intersection of My_description2 and (My description1)&#x27;,
+    },
+  ],
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for enum</h1>
+          <dl>
+            <dt>intersects permuted values</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ enum: [1, &#x27;1&#x27;, 2] }),
+    deepFreeze({ enum: [2, 1, &#x27;1&#x27;] }),
+  ),
+  [
+    { enum: [1, &#x27;1&#x27;, 2] },
+    { enum: [2, 1, &#x27;1&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>common subset of first and second</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ enum: [1, 2, 3] }),
+    deepFreeze({ enum: [0, 1, 2] }),
+  ),
+  { enum: [1, 2] },
+);</code></pre></dd>
+            <dt>treats null like any other value</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ enum: [1, 2, 3, null] }),
+    deepFreeze({ enum: [0, 1, 2, null] }),
+  ),
+  { enum: [1, 2, null] },
+);</code></pre></dd>
+            <dt>throws EmptyIntersectionError if none in common</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ enum: [2, 3] }),
+    deepFreeze({ enum: [0, 1] }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if one has an object</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ enum: [2, {}] }),
+    deepFreeze({ enum: [0, 1] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ enum: true }),
+      deepFreeze({ enum: [0, 1] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for examples</h1>
+          <dl>
+            <dt>concatenates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ examples: [10] }),
+    deepFreeze({ examples: [5] }),
+  ),
+  [
+    { examples: [10, 5] },
+    { examples: [5, 10] },
+  ],
+);</code></pre></dd>
+            <dt>removes duplicates</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ examples: [10] }),
+    deepFreeze({ examples: [10] }),
+  ),
+  {
+    examples: [10],
+  },
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ examples: true }),
+      deepFreeze({ examples: [10] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for exclusiveMaximum</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: 3 }),
+    deepFreeze({ exclusiveMaximum: 2 }),
+  ),
+  { exclusiveMaximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: -3 }),
+    deepFreeze({ exclusiveMaximum: -2 }),
+  ),
+  { exclusiveMaximum: -3 },
+);</code></pre></dd>
+            <dt>returns smaller exclusiveMaximum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: 2 }),
+  ),
+  { exclusiveMaximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller maximum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ exclusiveMaximum: &#x27;test&#x27; }),
+      deepFreeze({ exclusiveMaximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns smaller with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: true, maximum: 2 }),
+  ),
+  { exclusiveMaximum: true, maximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { exclusiveMaximum: true, maximum: -3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ maximum: true }),
+      deepFreeze({ maximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns smaller with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ exclusiveMaximum: true, maximum: 2 }),
+  ),
+  { exclusiveMaximum: true, maximum: 2 },
+);</code></pre></dd>
+            <dt>returns smaller without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMaximum: true, maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { exclusiveMaximum: true, maximum: -3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ maximum: true }),
+      deepFreeze({ maximum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for exclusiveMinimum</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: 3 }),
+    deepFreeze({ exclusiveMinimum: 2 }),
+  ),
+  { exclusiveMinimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: -3 }),
+    deepFreeze({ exclusiveMinimum: -2 }),
+  ),
+  { exclusiveMinimum: -2 },
+);</code></pre></dd>
+            <dt>returns larger exclusiveMinimum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: 3 }),
+  ),
+  { exclusiveMinimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger minimum</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ exclusiveMinimum: &#x27;test&#x27; }),
+      deepFreeze({ exclusiveMinimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns larger with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: true, minimum: 3 }),
+  ),
+  { exclusiveMinimum: true, minimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: -2 }),
+    deepFreeze({ minimum: -3 }),
+  ),
+  { exclusiveMinimum: true, minimum: -2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ minimum: true }),
+      deepFreeze({ minimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+            <dt>returns larger with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 2 }),
+    deepFreeze({ exclusiveMinimum: true, minimum: 3 }),
+  ),
+  { exclusiveMinimum: true, minimum: 3 },
+);</code></pre></dd>
+            <dt>returns larger without exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: 2 }),
+    deepFreeze({ minimum: 3 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative with exclusive true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ exclusiveMinimum: true, minimum: -2 }),
+    deepFreeze({ minimum: -3 }),
+  ),
+  { exclusiveMinimum: true, minimum: -2 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ minimum: true }),
+      deepFreeze({ minimum: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxItems</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxItems: 3 }),
+    deepFreeze({ maxItems: 2 }),
+  ),
+  { maxItems: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxLength</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxLength: 3 }),
+    deepFreeze({ maxLength: 2 }),
+  ),
+  { maxLength: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maxProperties</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maxProperties: 3 }),
+    deepFreeze({ maxProperties: 2 }),
+  ),
+  { maxProperties: 2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for maximum</h1>
+          <dl>
+            <dt>returns smaller</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: 3 }),
+    deepFreeze({ maximum: 2 }),
+  ),
+  { maximum: 2 },
+);</code></pre></dd>
+            <dt>returns more negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ maximum: -3 }),
+    deepFreeze({ maximum: -2 }),
+  ),
+  { maximum: -3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minItems</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minItems: 3 }),
+    deepFreeze({ minItems: 2 }),
+  ),
+  { minItems: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minLength</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minLength: 3 }),
+    deepFreeze({ minLength: 2 }),
+  ),
+  { minLength: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minProperties</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minProperties: 3 }),
+    deepFreeze({ minProperties: 2 }),
+  ),
+  { minProperties: 3 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for minimum</h1>
+          <dl>
+            <dt>returns larger</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: 3 }),
+    deepFreeze({ minimum: 2 }),
+  ),
+  { minimum: 3 },
+);</code></pre></dd>
+            <dt>returns less negative</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ minimum: -3 }),
+    deepFreeze({ minimum: -2 }),
+  ),
+  { minimum: -2 },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for multipleOf</h1>
+          <dl>
+            <dt>returns one if multiple of other (integer)</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 4 }),
+    deepFreeze({ multipleOf: 2 }),
+  ),
+  { multipleOf: 4 },
+);</code></pre></dd>
+            <dt>returns one if multiple of other (float)</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 1 }),
+    deepFreeze({ multipleOf: 0.5 }),
+  ),
+  { multipleOf: 1 },
+);</code></pre></dd>
+            <dt>otherwise returns multiple of first and second</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ multipleOf: 2 }),
+    deepFreeze({ multipleOf: 3 }),
+  ),
+  { multipleOf: 6 },
+);</code></pre></dd>
+            <dt>throws TypeError for non-number</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ multipleOf: true }),
+      deepFreeze({ multipleOf: 1 }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for required</h1>
+          <dl>
+            <dt>returns empty if both empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ required: [] }),
+    deepFreeze({ required: [] }),
+  ),
+  { required: [] },
+);</code></pre></dd>
+            <dt>returns non-empty if other empty</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;] }),
+    deepFreeze({ required: [] }),
+  ),
+  { required: [&#x27;a&#x27;] },
+);</code></pre></dd>
+            <dt>returns union with no intersection</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;] }),
+    deepFreeze({ required: [&#x27;b&#x27;] }),
+  ),
+  [
+    { required: [&#x27;a&#x27;, &#x27;b&#x27;] },
+    { required: [&#x27;b&#x27;, &#x27;a&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>returns either if permuted</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ required: [&#x27;a&#x27;, &#x27;b&#x27;] }),
+    deepFreeze({ required: [&#x27;b&#x27;, &#x27;a&#x27;] }),
+  ),
+  [
+    { required: [&#x27;a&#x27;, &#x27;b&#x27;] },
+    { required: [&#x27;b&#x27;, &#x27;a&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ required: true }),
+      deepFreeze({ required: [&#x27;a&#x27;, &#x27;b&#x27;] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for oneOf</h1>
+          <dl>
+            <dt>one is permuted other</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ oneOf: [{ maximum: 10 }, { minimum: 12 }] }),
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  [
+    { oneOf: [{ maximum: 10 }, { minimum: 12 }] },
+    { oneOf: [{ minimum: 12 }, { maximum: 10 }] },
+  ],
+);</code></pre></dd>
+            <dt>intersects each if one is single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ oneOf: [{ multipleOf: 1 }] }),
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+  ),
+  {
+    oneOf: [
+      { minimum: 12, multipleOf: 1 },
+      { maximum: 10, multipleOf: 1 },
+    ],
+  },
+);</code></pre></dd>
+            <dt>throws IntersectNotSupportedError if not permuted nor single</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
+    deepFreeze({ oneOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+  ),
+  IntersectNotSupportedError,
+);</code></pre></dd>
+            <dt>throws TypeError for non-Array</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ oneOf: true }),
+      deepFreeze({ oneOf: [{ maximum: 10 }] }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for propertyNames</h1>
+          <dl>
+            <dt>intersects</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ propertyNames: { maxLength: 10 } }),
+    deepFreeze({ propertyNames: { minLength: 5 } }),
+  ),
+  {
+    propertyNames: {
+      minLength: 5,
+      maxLength: 10,
+    },
+  },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for pattern</h1>
+          <dl>
+            <dt>returns anchored lookahead assertion for each pattern</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ pattern: &#x27;hi&#x27; }),
+    deepFreeze({ pattern: &#x27;ho&#x27; }),
+  ),
+  [
+    { pattern: &#x27;^(?=.*hi)(?=.*ho)&#x27; },
+    { pattern: &#x27;^(?=.*ho)(?=.*hi)&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>skips .* for anchored patterns</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ pattern: &#x27;^hi&#x27; }),
+    deepFreeze({ pattern: &#x27;^ho&#x27; }),
+  ),
+  [
+    { pattern: &#x27;^(?=^hi)(?=^ho)&#x27; },
+    { pattern: &#x27;^(?=^ho)(?=^hi)&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>throws TypeError for non-string</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ pattern: true }),
+      deepFreeze({ pattern: &#x27;hi&#x27; }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for readOnly</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ readOnly: true }),
+    deepFreeze({ readOnly: false }),
+  ),
+  { readOnly: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ readOnly: &#x27;hi&#x27; }),
+      deepFreeze({ readOnly: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for title</h1>
+          <dl>
+            <dt>is combination of both titles</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ title: &#x27;title1&#x27; }),
+    deepFreeze({ title: &#x27;title2&#x27; }),
+  ),
+  [
+    { title: &#x27;Intersection of title1 and title2&#x27; },
+    { title: &#x27;Intersection of title2 and title1&#x27; },
+  ],
+);</code></pre></dd>
+            <dt>is surrounds spaced title with with parens</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ title: &#x27;My title1&#x27; }),
+    deepFreeze({ title: &#x27;My_title2&#x27; }),
+  ),
+  [
+    { title: &#x27;Intersection of (My title1) and My_title2&#x27; },
+    { title: &#x27;Intersection of My_title2 and (My title1)&#x27; },
+  ],
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for type</h1>
+          <dl>
+            <dt>type1 intersect type2 is type1 when same</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;number&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type1 intersect unconstrained is type1</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;number&#x27; }),
+    deepFreeze({}),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type2 intersect unconstrained is type2</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({}),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;number&#x27; },
+);</code></pre></dd>
+            <dt>type1 !== type2 throws EmptyIntersectionError</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ type: &#x27;boolean&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>type1 intersect type2 empty EmptyIntersectionError</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;] }),
+    deepFreeze({ type: [&#x27;number&#x27;] }),
+  ),
+  EmptyIntersectionError,
+);</code></pre></dd>
+            <dt>integer intersect number is integer</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: &#x27;integer&#x27; }),
+    deepFreeze({ type: &#x27;number&#x27; }),
+  ),
+  { type: &#x27;integer&#x27; },
+);</code></pre></dd>
+            <dt>permuted array types intersect</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>deepStrictEqualAnyOf(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;] }),
+    deepFreeze({ type: [&#x27;number&#x27;, &#x27;boolean&#x27;] }),
+  ),
+  [
+    { type: [&#x27;boolean&#x27;, &#x27;number&#x27;] },
+    { type: [&#x27;number&#x27;, &#x27;boolean&#x27;] },
+  ],
+);</code></pre></dd>
+            <dt>type1 subset type2 intersect</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;string&#x27;] }),
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;, &#x27;string&#x27;] }),
+  ),
+  { type: [&#x27;boolean&#x27;, &#x27;string&#x27;] },
+);</code></pre></dd>
+            <dt>type2 subset type1 intersect to single element</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ type: [&#x27;boolean&#x27;, &#x27;number&#x27;, &#x27;string&#x27;] }),
+    deepFreeze({ type: [&#x27;null&#x27;, &#x27;string&#x27;] }),
+  ),
+  { type: &#x27;string&#x27; },
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for uniqueItems</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ uniqueItems: true }),
+    deepFreeze({ uniqueItems: false }),
+  ),
+  { uniqueItems: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ uniqueItems: &#x27;hi&#x27; }),
+      deepFreeze({ uniqueItems: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>for writeOnly</h1>
+          <dl>
+            <dt>returns true if either true</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.deepStrictEqual(
+  intersectSchema(
+    deepFreeze({ writeOnly: true }),
+    deepFreeze({ writeOnly: false }),
+  ),
+  { writeOnly: true },
+);</code></pre></dd>
+            <dt>throws TypeError for non-boolean</dt>
+            <dt>/home/kevin/src/node-projects/json-schema-intersect/test/index.js</dt>
+            <dd><pre><code>assert.throws(
+  () =&#x3E; {
+    intersectSchema(
+      deepFreeze({ writeOnly: &#x27;hi&#x27; }),
+      deepFreeze({ writeOnly: true }),
+    );
+  },
+  TypeError,
+);</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+  </div><!-- .container -->
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/2.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/highlight.js/9.1.0/highlight.min.js"></script>
+  <script type="text/javascript">//<![CDATA[
+'use strict';
+// Adjust the nested heading level to match depth
+$('section section h1').each(function() {
+  var $this = $(this);
+  var depth = Math.min($this.parents('section').length, 6);
+  // http://stackoverflow.com/a/30059450/503410
+  $this.wrapInner(document.createElement('h' + depth)).children().unwrap();
+});
+
+// Make the tests collapsible
+var testNum = 0;
+$('dt + dd')
+  .addClass('collapse')
+  .attr('role', 'tabpanel')
+  .attr('aria-expanded', 'false')
+  .each(function() {
+    var $this = $(this);
+    var $dt = $this.prev();
+
+    ++testNum;
+    var id = 'test' + testNum;
+    var idDt = id + '-title';
+    var idDd = id + '-desc';
+
+    $dt.attr('id', idDt);
+    $this.attr('id', idDd);
+
+    $dt.wrapInner('<a role="button" data-toggle="collapse" href="#' + idDd +
+        '" aria-expanded="false" aria-controls="' + idDd + '"></a>')
+      .children()
+      .collapse();
+  });
+
+// Enable syntax highlighting for the code (which is all JavaScript)
+hljs.configure({languages: ['javascript']});
+hljs.initHighlighting();
+//]]></script>
+</body>
+</html>

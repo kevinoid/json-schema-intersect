@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>JSON Schema Intersect</h1>
+<p><a href="https://github.com/kevinoid/json-schema-intersect/actions?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/kevinoid/json-schema-intersect/node.js.yml?branch=main&amp;style=flat&amp;label=build" alt="Build Status"></a>
+<a href="https://app.codecov.io/gh/kevinoid/json-schema-intersect/branch/main"><img src="https://img.shields.io/codecov/c/github/kevinoid/json-schema-intersect/main.svg?style=flat" alt="Coverage"></a>
+<a href="https://libraries.io/npm/json-schema-intersect"><img src="https://img.shields.io/librariesio/release/npm/json-schema-intersect.svg?style=flat" alt="Dependency Status"></a>
+<a href="https://www.npmjs.com/package/json-schema-intersect"><img src="https://img.shields.io/node/v/json-schema-intersect.svg?style=flat" alt="Supported Node Version"></a>
+<a href="https://www.npmjs.com/package/json-schema-intersect"><img src="https://img.shields.io/npm/v/json-schema-intersect.svg?style=flat" alt="Version on NPM"></a></p>
+<p>A library to combine multiple <a href="https://json-schema.org">JSON Schemas</a> into a
+single schema which matches instances which are valid for all of the combined
+schemas.  This is useful for supporting older JSON Schema versions which lack
+support for
+<a href="https://json-schema.org/draft/2020-12/json-schema-core#name-allof"><code>allOf</code></a>,
+such as <a href="https://tools.ietf.org/html/draft-zyp-json-schema-04#section-3.5">JSON Schema Draft
+4</a> used by
+<a href="https://spec.openapis.org/oas/v2.0.html#schema-object">Swagger/OpenAPI 2</a>.
+The combined schema behaves as closely as possible to a schema with
+<a href="https://json-schema.org/draft/2020-12/json-schema-core#name-allof"><code>allOf</code></a>.
+containing each of the input schemas.</p>
+<p>[!IMPORTANT]
+Use <a href="https://json-schema.org/draft/2020-12/json-schema-core#name-allof"><code>allOf</code></a>
+to create a combined schema when possible.</p>
+<h2>Introductory Example</h2>
+<pre class="prettyprint source lang-js"><code>import assert from 'node:assert/strict';
+import jsonSchemaIntersect from 'json-schema-intersect';
+
+assert.deepEqual(
+  jsonSchemaIntersect(
+    {
+      type: 'number',
+      minimum: 5,
+      maximum: 15,
+    },
+    {
+      type: 'number',
+      minimum: 0,
+      maximum: 10,
+    },
+  ),
+  {
+    type: 'number',
+    minimum: 5,
+    maximum: 10,
+  },
+);
+</code></pre>
+<h2>Features</h2>
+<ul>
+<li>Supports Schema objects from
+<a href="https://spec.openapis.org/oas/v2.0.html#schema-object">Swagger/OpenAPI 2</a>
+and <a href="https://spec.openapis.org/oas/v3.0.0.html">OpenAPI 3</a>, including
+<code>nullable</code>, <code>readOnly</code>, <code>writeOnly</code>, and other constraints.</li>
+</ul>
+<h2>Installation</h2>
+<p><a href="https://www.npmjs.com/package/json-schema-intersect">This package</a> can be
+installed using <a href="https://www.npmjs.com/">npm</a>, either globally or locally, by
+running:</p>
+<pre class="prettyprint source lang-sh"><code>npm install json-schema-intersect
+</code></pre>
+<h2>Recipes</h2>
+<p>More examples can be found in the <a href="https://kevinoid.github.io/json-schema-intersect/spec">test
+specifications</a>.</p>
+<h2>API Docs</h2>
+<p>To use this module as a library, see the <a href="https://kevinoid.github.io/json-schema-intersect/api">API
+Documentation</a>.</p>
+<h2>Contributing</h2>
+<p>Contributions are appreciated.  Contributors agree to abide by the <a href="https://www.contributor-covenant.org/version/1/4/code-of-conduct.html">Contributor
+Covenant Code of
+Conduct</a>.
+If this is your first time contributing to a Free and Open Source Software
+project, consider reading <a href="https://opensource.guide/how-to-contribute/">How to Contribute to Open
+Source</a>
+in the Open Source Guides.</p>
+<p>If the desired change is large, complex, backwards-incompatible, can have
+significantly differing implementations, or may not be in scope for this
+project, opening an issue before writing the code can avoid frustration and
+save a lot of time and effort.</p>
+<h2>License</h2>
+<p>This project is available under the terms of the <a href="LICENSE.txt">MIT License</a>.
+See the <a href="https://tldrlegal.com/license/mit-license">summary at TLDRLegal</a>.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="EmptyIntersectionError.html">EmptyIntersectionError</a></li><li><a href="IntersectNotSupportedError.html">IntersectNotSupportedError</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Nov 21 2024 09:21:45 GMT-0700 (Mountain Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
