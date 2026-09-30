@@ -12,7 +12,7 @@ import intersectSchema, { EmptyIntersectionError, IntersectNotSupportedError }
   from '../index.js';
 
 function deepStrictEqualAnyOf(actual, expected) {
-  if (!expected.some((e) => isDeepStrictEqual(actual, e))) {
+  if (expected.every((e) => !isDeepStrictEqual(actual, e))) {
     throw new assert.AssertionError({
       actual,
       // expected is used for diff.  Only include one.

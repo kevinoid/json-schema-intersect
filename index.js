@@ -76,7 +76,7 @@ function intersectAllOf(allOf1, allOf2) {
 
   const allOf = [...allOf1];
   for (const elem2 of allOf2) {
-    if (!allOf1.some((elem1) => isSchemaEqual(elem1, elem2))) {
+    if (allOf1.every((elem1) => !isSchemaEqual(elem1, elem2))) {
       allOf.push(elem2);
     }
   }
@@ -173,7 +173,7 @@ function intersectExamples(examples1, examples2) {
 
   const examples = [...examples1];
   for (const elem2 of examples2) {
-    if (!examples1.some((elem1) => isSchemaEqual(elem1, elem2))) {
+    if (examples1.every((elem1) => !isSchemaEqual(elem1, elem2))) {
       examples.push(elem2);
     }
   }
