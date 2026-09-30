@@ -710,7 +710,7 @@ function testIntersectSchema(intersectSchema) {
       assert.throws(
         () => intersectSchema(
           deepFreeze({ anyOf: [{ minimum: 12 }, { maximum: 10 }] }),
-          deepFreeze({ anyOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+          deepFreeze({ anyOf: [{ multipleOf: 1 }, { const: 3.24 }] }),
         ),
         IntersectNotSupportedError,
       );
@@ -1525,7 +1525,7 @@ function testIntersectSchema(intersectSchema) {
       assert.throws(
         () => intersectSchema(
           deepFreeze({ oneOf: [{ minimum: 12 }, { maximum: 10 }] }),
-          deepFreeze({ oneOf: [{ multipleOf: 1 }, { const: 3.14 }] }),
+          deepFreeze({ oneOf: [{ multipleOf: 1 }, { const: 3.24 }] }),
         ),
         IntersectNotSupportedError,
       );
