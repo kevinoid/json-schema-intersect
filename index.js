@@ -594,10 +594,10 @@ export default function intersectSchema(schema1, schema2) {
     return schema1;
   }
 
-  const boolExclusiveMax =
+  const isBoolExclusiveMax =
     typeof schema1.exclusiveMaximum === 'boolean'
     || typeof schema2.exclusiveMaximum === 'boolean';
-  const boolExclusiveMin =
+  const isBoolExclusiveMin =
     typeof schema1.exclusiveMinimum === 'boolean'
     || typeof schema2.exclusiveMinimum === 'boolean';
 
@@ -633,7 +633,7 @@ export default function intersectSchema(schema1, schema2) {
   if (intersection.exclusiveMaximum <= intersection.maximum
     || (intersection.maximum === undefined
       && intersection.exclusiveMaximum !== undefined)) {
-    if (boolExclusiveMax) {
+    if (isBoolExclusiveMax) {
       intersection.maximum = intersection.exclusiveMaximum;
       intersection.exclusiveMaximum = true;
     } else {
@@ -647,7 +647,7 @@ export default function intersectSchema(schema1, schema2) {
   if (intersection.exclusiveMinimum >= intersection.minimum
     || (intersection.minimum === undefined
       && intersection.exclusiveMinimum !== undefined)) {
-    if (boolExclusiveMin) {
+    if (isBoolExclusiveMin) {
       intersection.minimum = intersection.exclusiveMinimum;
       intersection.exclusiveMinimum = true;
     } else {
