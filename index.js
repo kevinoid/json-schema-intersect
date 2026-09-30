@@ -321,7 +321,7 @@ function intersectDependentRequired(dependentRequired1, dependentRequired2) {
 
 function intersectType(type1, type2) {
   const arr1 = Array.isArray(type1) ? type1 : [type1];
-  const set2 = Array.isArray(type2) ? new Set(type2) : new Set([type2]);
+  const set2 = new Set(Array.isArray(type2) ? type2 : [type2]);
 
   const intersection = [];
   for (const elem1 of arr1) {
